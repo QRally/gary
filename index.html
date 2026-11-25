@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>GARY • 2026 Subaru WRC Night Stage Christmas Card</title>
+  <style>
+    /* =========================================================================
+       BASE & OLED BLACK COCKPIT THEME
+       ========================================================================= */
+    :root {
+      --bg-oled: #0a0b0e;
+      --panel-bg: #111318;
+      --panel-border: #262932;
+      --accent-red: #ef4444;
+      --accent-amber: #f59e0b;
+      --accent-green: #22c55e;
+      --accent-blue: #38bdf8;
+      --wrc-blue: #003399;
+      --wrc-gold: #eab308;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background-color: var(--bg-oled);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow-x: hidden;
+    }
+
+    /* =========================================================================
+       LAYOUT CONTAINER
+       ========================================================================= */
+    .app-shell {
+      width: 100%;
+      max-width: 980px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 12px 14px 12px;
+      gap: 10px;
+    }
+
+    /* Top Stage Timing Header */
+    .stage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 12px;
+      background: #0e1015;
+      border: 1px solid #1f232d;
+      border-radius: 10px;
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      gap: 8px;
+    }
+
+    .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      color: #f8fafc;
+      min-width: 0;
+    }
+
+    .stage-badge span:last-child {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red);
+      animation: pulseDot 1.6s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .audio-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #161922;
+      border: 1px solid #2e3442;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .audio-pill.active {
+      color: #e2e8f0;
+      border-color: #475569;
+    }
+
+    .audio-pill.muted {
+      color: #f87171;
+      border-color: #7f1d1d;
+    }
+
+    /* =========================================================================
+       CANVAS STAGE VIEWPORT (STARTS PITCH-BLACK)
+       ========================================================================= */
+    .stage-viewport {
+      position: relative;
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: 295px;
+      max-height: 540px;
+      background: #000000;
+      border: 1px solid #232732;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.95);
+    }
+
+    canvas#rallyCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #000000;
+    }
+
+    /* =========================================================================
+       RALLY SWITCHGEAR DASHBOARD PANEL
+       ========================================================================= */
+    .dash-panel {
+      background: linear-gradient(180deg, #161920 0%, #0d0f13 100%);
+      border: 1px solid #2a2e39;
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    /* Warning Tell-Tale Lamps Bar */
+    .telltale-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #212530;
+      flex-wrap: wrap;
+    }
+
+    .telltale-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lamp {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #4b5563;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+    }
+
+    .lamp-bulb {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #1e222b;
+      border: 1px solid #333846;
+      transition: all 0.2s ease;
+    }
+
+    .lamp.ign-on { color: #fca5a5; }
+    .lamp.ign-on .lamp-bulb {
+      background: #ef4444;
+      box-shadow: 0 0 10px #ef4444, inset 0 0 3px #fff;
+    }
+
+    .lamp.oil-warn { color: #fcd34d; }
+    .lamp.oil-warn .lamp-bulb {
+      background: #f59e0b;
+      box-shadow: 0 0 10px #f59e0b, inset 0 0 3px #fff;
+    }
+
+    .lamp.beam-on { color: #7dd3fc; }
+    .lamp.beam-on .lamp-bulb {
+      background: #0ea5e9;
+      box-shadow: 0 0 10px #0ea5e9, inset 0 0 3px #fff;
+    }
+
+    .rpm-readout {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #eab308;
+      background: #07080a;
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid #262b36;
+      letter-spacing: 0.05em;
+    }
+
+    /* Controls Grid */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 520px) {
+      .controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .control-cell {
+      background: #11141a;
+      border: 1px solid #252934;
+      border-radius: 10px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 7px;
+      text-align: center;
+    }
+
+    /* Festive Holiday Ring Accent on Cibié Cell */
+    .control-cell.cibie-festive {
+      border-color: #3f2a32;
+      background: linear-gradient(180deg, #16141b 0%, #11141a 100%);
+    }
+
+    .switch-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #cbd5e1;
+      line-height: 1.2;
+    }
+
+    .switch-sub {
+      font-size: 0.62rem;
+      color: #64748b;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* =========================================================================
+       TACTILE METAL TOGGLE SWITCHES
+       ========================================================================= */
+    .toggle-btn {
+      position: relative;
+      width: 50px;
+      height: 62px;
+      background: radial-gradient(circle at 50% 50%, #2a2e37 0%, #15171c 75%);
+      border: 2px solid #474d59;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+      padding: 0;
+    }
+
+    /* Festive red & green dashed holiday ring around Cibié toggle */
+    .toggle-btn.festive-ring {
+      border: 2px dashed #ef4444;
+      box-shadow: 0 0 0 2px #166534, 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+
+    .toggle-btn.festive-ring[aria-pressed="true"] {
+      border-color: #22c55e;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.45), 0 0 0 2px #dc2626;
+    }
+
+    .toggle-btn:focus-visible {
+      outline: 2px solid var(--wrc-gold);
+      outline-offset: 2px;
+    }
+
+    .toggle-nut {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #9ca3af 0%, #4b5563 50%, #1f2937 100%);
+      border: 1px solid #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .toggle-bat {
+      position: absolute;
+      width: 10px;
+      height: 28px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #6b7280 0%, #f3f4f6 45%, #4b5563 100%);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.85);
+      transform-origin: center center;
+      transform: translateY(8px) scaleY(0.95);
+      transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .toggle-btn[aria-pressed="true"] .toggle-bat {
+      transform: translateY(-8px) scaleY(0.95);
+    }
+
+    /* =========================================================================
+       ENGINE PUSH-BUTTON STARTER
+       ========================================================================= */
+    .starter-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 3px solid #525866;
+      background: radial-gradient(circle at 35% 30%, #ff5a59 0%, #dc2626 55%, #7f1d1d 100%);
+      color: #ffffff;
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 5px 12px rgba(220, 38, 38, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.4);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .starter-btn:active {
+      transform: scale(0.93) translateY(2px);
+    }
+
+    .starter-btn.running {
+      background: radial-gradient(circle at 35% 30%, #4ade80 0%, #16a34a 60%, #14532d 100%);
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.45), inset 0 2px 3px rgba(255, 255, 255, 0.4);
+    }
+
+    /* =========================================================================
+       FULL-WIDTH EJ20 BOXER TURBO LAUNCH / THROTTLE BAR
+       ========================================================================= */
+    .throttle-row {
+      width: 100%;
+    }
+
+    .throttle-btn {
+      width: 100%;
+      min-height: 54px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 2px solid #1d4ed8;
+      background: linear-gradient(180deg, #003399 0%, #001f66 100%);
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      box-shadow: 0 4px 14px rgba(0, 51, 153, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      transition: transform 0.07s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .throttle-btn .btn-kicker {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #fde047;
+      text-transform: uppercase;
+    }
+
+    .throttle-btn .btn-main {
+      font-size: 0.84rem;
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .throttle-btn:active, .throttle-btn.revving {
+      transform: scale(0.985) translateY(2px);
+      border-color: #eab308;
+      background: linear-gradient(180deg, #1e40af 0%, #172554 100%);
+      box-shadow: 0 0 18px rgba(234, 179, 8, 0.45);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- Top Rally Stage Header -->
+    <header class="stage-header">
+      <div class="stage-badge">
+        <span class="live-dot"></span>
+        <span id="stageHeaderLabel">SS12 • NIGHT STAGE • GARY'S EDITION</span>
+      </div>
+      <button id="audioToggleBtn" class="audio-pill active" type="button" title="Toggle Web Audio Engine Sound">
+        <span id="audioIcon">🔊</span>
+        <span id="audioStatusText">SOUND ON</span>
+      </button>
+    </header>
+
+    <!-- Main Interactive Rally Canvas (Starts Pitch-Black) -->
+    <main class="stage-viewport">
+      <canvas id="rallyCanvas"></canvas>
+    </main>
+
+    <!-- WRC Switchgear Dashboard Panel -->
+    <section class="dash-panel" aria-label="Subaru WRC Dashboard Controls">
+      <!-- Tell-Tale Warning LEDs & Digital Tachometer -->
+      <div class="telltale-bar">
+        <div class="telltale-group">
+          <div id="lampIgn" class="lamp">
+            <span class="lamp-bulb"></span>
+            <span>IGN</span>
+          </div>
+          <div id="lampOil" class="lamp">
+            <span class="lamp-bulb"></span>
+            <span>OIL</span>
+          </div>
+          <div id="lampBeam" class="lamp">
+            <span class="lamp-bulb"></span>
+            <span>CIBIÉ</span>
+          </div>
+        </div>
+        <div id="rpmDisplay" class="rpm-readout">0 RPM</div>
+      </div>
+
+      <!-- 4 Primary Tactile Switches -->
+      <div class="controls-grid">
+        <!-- 1. Ignition Toggle -->
+        <div class="control-cell">
+          <span class="switch-label">Ignition</span>
+          <button id="swIgnition" class="toggle-btn" type="button" aria-pressed="false" aria-label="Master Ignition Switch">
+            <span class="toggle-nut"></span>
+            <span class="toggle-bat"></span>
+          </button>
+          <span id="lblIgnition" class="switch-sub">OFF</span>
+        </div>
+
+        <!-- 2. Engine Push-Button Starter -->
+        <div class="control-cell">
+          <span class="switch-label">Engine</span>
+          <button id="btnStart" class="starter-btn" type="button" aria-label="Start EJ20 Boxer Engine">
+            START
+          </button>
+          <span id="lblEngine" class="switch-sub">STOPPED</span>
+        </div>
+
+        <!-- 3. Festive Cibié Spots Toggle -->
+        <div class="control-cell cibie-festive">
+          <span class="switch-label">🎄 Cibié Spots</span>
+          <button id="swSpots" class="toggle-btn festive-ring" type="button" aria-pressed="false" aria-label="Festive Cibié Spotlights Switch">
+            <span class="toggle-nut"></span>
+            <span class="toggle-bat"></span>
+          </button>
+          <span id="lblSpots" class="switch-sub">OFF</span>
+        </div>
+
+        <!-- 4. Extra Festive Lights & Snow Toggle -->
+        <div class="control-cell">
+          <span class="switch-label">Festive Lights</span>
+          <button id="swFestive" class="toggle-btn" type="button" aria-pressed="false" aria-label="Extra Festive Lights Switch">
+            <span class="toggle-nut"></span>
+            <span class="toggle-bat"></span>
+          </button>
+          <span id="lblFestive" class="switch-sub">OFF</span>
+        </div>
+      </div>
+
+      <!-- Full-Width EJ20 Boxer Turbo Launch / Throttle Blip Button -->
+      <div class="throttle-row">
+        <button id="btnThrottle" class="throttle-btn" type="button" aria-label="Blip Throttle and Drive Across Stage">
+          <span class="btn-kicker">EJ20 BOXER TURBO</span>
+          <span class="btn-main">BLIP THROTTLE (HOLD / SPACEBAR)</span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /**
+     * =========================================================================
+     * EASY CUSTOMISATION CONFIG FOR RODGE
+     * Change senderName, doorNumber, colours, or greeting text for future friends!
+     * =========================================================================
+     */
+    const CARD_CONFIG = {
+      senderName: "GARY",
+      greetingTitle: "MERRY CHRISTMAS",
+      year: "2026",
+      paceNoteText: "100 OVER CREST • INTO MERRY CHRISTMAS 2026 • DON'T CUT!",
+      finaleBannerText: "FLAT OUT OVER CREST • MERRY CHRISTMAS FROM GARY",
+      stageName: "NIGHT STAGE",
+      stageNumber: "SS12",
+      doorNumber: "555",
+      wrcBlue: "#003399",       // Classic Subaru WRC Royal Blue
+      wrcGold: "#eab308",       // Iconic Speedline / OZ Gold
+      standbyPrompt: "SWITCH ON IGNITION & CIBIÉS"
+    };
+
+    /**
+     * =========================================================================
+     * APPLICATION STATE
+     * =========================================================================
+     */
+    const state = {
+      ignitionOn: false,
+      engineRunning: false,
+      cranking: false,
+      cibiesOn: false,          // Controls top screen illumination & festive Cibié scene
+      festiveExtraOn: false,    // Extra fairy lights & heavier festive snow
+      throttlePressed: false,
+      muted: false,
+      rpm: 0,
+      targetRpm: 0,
+      wheelAngle: 0,
+      carXOffset: 0,            // Horizontal offset for drive-across animation
+      hasCompletedPass: false,  // Shows celebratory banner once car drives across
+      passBannerTimer: 0,
+      carBounceY: 0,
+      carPitch: 0,
+      time: 0,
+      lastFrameTime: performance.now()
+    };
+
+    // Populate top stage header from config
+    document.getElementById("stageHeaderLabel").textContent =
+      `${CARD_CONFIG.stageNumber} • ${CARD_CONFIG.stageName} • ${CARD_CONFIG.senderName}'S EDITION`;
+
+    /**
+     * =========================================================================
+     * WEB AUDIO API — SUBARU EJ20 UNEQUAL-LENGTH HEADER FLAT-FOUR BOXER ENGINE
+     * Synthesises deep uneven Boxer burble at ~980 RPM, turbo spool whistle,
+     * and rally anti-lag / wastegate chatter on throttle lift-off.
+     * =========================================================================
+     */
+    class BoxerAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.masterGain = null;
+        this.engineGain = null;
+        this.oscCylinderBankA = null;
+        this.oscCylinderBankB = null;
+        this.oscSubBurble = null;
+        this.oscTurboWhistle = null;
+        this.turboGain = null;
+        this.lfoBoxerPulse = null;
+        this.lfoBoxerGain = null;
+        this.filter = null;
+        this.noiseBuffer = null;
+        this.initialised = false;
+      }
+
+      init() {
+        if (this.initialised) {
+          if (this.ctx && this.ctx.state === "suspended") {
+            this.ctx.resume();
+          }
+          return;
+        }
+
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+
+        this.ctx = new AudioCtx();
+
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.value = state.muted ? 0 : 0.44;
+        this.masterGain.connect(this.ctx.destination);
+
+        // Noise buffer for exhaust rasp, wastegate flutter & anti-lag bangs
+        const bufferSize = this.ctx.sampleRate * 2;
+        this.noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = this.noiseBuffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99765 * b0 + white * 0.099046;
+          b1 = 0.96300 * b1 + white * 0.2965164;
+          b2 = 0.57000 * b2 + white * 1.0526913;
+          data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.16;
+        }
+
+        // Deep lowpass filter for Boxer rumble
+        this.filter = this.ctx.createBiquadFilter();
+        this.filter.type = "lowpass";
+        this.filter.frequency.value = 175;
+        this.filter.Q.value = 3.8;
+
+        // Warm exhaust saturation
+        const shaper = this.ctx.createWaveShaper();
+        shaper.curve = this.makeDistortionCurve(34);
+        shaper.oversample = "2x";
+
+        this.engineGain = this.ctx.createGain();
+        this.engineGain.gain.value = 0.0001;
+
+        // Bank A & slightly detuned Bank B simulate unequal-length Boxer exhaust headers!
+        this.oscCylinderBankA = this.ctx.createOscillator();
+        this.oscCylinderBankA.type = "sawtooth";
+        this.oscCylinderBankA.frequency.value = 32;
+
+        this.oscCylinderBankB = this.ctx.createOscillator();
+        this.oscCylinderBankB.type = "sawtooth";
+        this.oscCylinderBankB.frequency.value = 33.4;
+
+        // Deep flat-four sub-bass thump
+        this.oscSubBurble = this.ctx.createOscillator();
+        this.oscSubBurble.type = "triangle";
+        this.oscSubBurble.frequency.value = 16;
+
+        // Asymmetric Boxer pulse LFO ("wub-wub-wub" cadence)
+        this.lfoBoxerPulse = this.ctx.createOscillator();
+        this.lfoBoxerPulse.type = "sine";
+        this.lfoBoxerPulse.frequency.value = 8.1;
+        this.lfoBoxerGain = this.ctx.createGain();
+        this.lfoBoxerGain.gain.value = 6.2;
+
+        this.lfoBoxerPulse.connect(this.lfoBoxerGain);
+        this.lfoBoxerGain.connect(this.oscCylinderBankA.frequency);
+
+        // IHI Turbocharger high-frequency spool whistle
+        this.oscTurboWhistle = this.ctx.createOscillator();
+        this.oscTurboWhistle.type = "sine";
+        this.oscTurboWhistle.frequency.value = 1400;
+        this.turboGain = this.ctx.createGain();
+        this.turboGain.gain.value = 0.0001;
+
+        this.oscCylinderBankA.connect(shaper);
+        this.oscCylinderBankB.connect(shaper);
+        this.oscSubBurble.connect(shaper);
+
+        shaper.connect(this.filter);
+        this.filter.connect(this.engineGain);
+        this.engineGain.connect(this.masterGain);
+
+        this.oscTurboWhistle.connect(this.turboGain);
+        this.turboGain.connect(this.masterGain);
+
+        this.oscCylinderBankA.start();
+        this.oscCylinderBankB.start();
+        this.oscSubBurble.start();
+        this.lfoBoxerPulse.start();
+        this.oscTurboWhistle.start();
+
+        this.initialised = true;
+      }
+
+      makeDistortionCurve(amount) {
+        const k = typeof amount === "number" ? amount : 50;
+        const nSamples = 44100;
+        const curve = new Float32Array(nSamples);
+        const deg = Math.PI / 180;
+        for (let i = 0; i < nSamples; ++i) {
+          const x = (i * 2) / nSamples - 1;
+          curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+        }
+        return curve;
+      }
+
+      setMuted(muted) {
+        if (!this.initialised) return;
+        this.masterGain.gain.setTargetAtTime(muted ? 0 : 0.44, this.ctx.currentTime, 0.04);
+      }
+
+      playSwitchClick(isOn) {
+        this.init();
+        if (!this.initialised || state.muted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(isOn ? 940 : 660, now);
+        osc.frequency.exponentialRampToValueAtTime(135, now + 0.035);
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.038);
+
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      }
+
+      playStarterBurst(durationSec = 0.44) {
+        this.init();
+        if (!this.initialised || state.muted) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const mod = this.ctx.createOscillator();
+        const modGain = this.ctx.createGain();
+        const gain = this.ctx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(175, now + durationSec);
+
+        mod.type = "sine";
+        mod.frequency.value = 10.5;
+        modGain.gain.value = 30;
+        mod.connect(modGain);
+        modGain.connect(osc.frequency);
+
+        gain.gain.setValueAtTime(0.24, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + durationSec);
+
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+
+        osc.start(now);
+        mod.start(now);
+        osc.stop(now + durationSec);
+        mod.stop(now + durationSec);
+      }
+
+      // Rally WRC Wastegate Chatter & Anti-Lag Pop on Throttle Lift-Off
+      triggerWastegateFlutter() {
+        if (!this.initialised || state.muted || !this.noiseBuffer) return;
+        const now = this.ctx.currentTime;
+
+        // 4 rapid wastegate chirps ("tsu-tsu-tsu-tsu")
+        for (let i = 0; i < 4; i++) {
+          const offset = i * 0.068;
+          const noise = this.ctx.createBufferSource();
+          noise.buffer = this.noiseBuffer;
+
+          const bp = this.ctx.createBiquadFilter();
+          bp.type = "bandpass";
+          bp.frequency.setValueAtTime(1650 - i * 180, now + offset);
+          bp.Q.value = 4.2;
+
+          const gain = this.ctx.createGain();
+          gain.gain.setValueAtTime(0.42 * (1 - i * 0.18), now + offset);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.055);
+
+          noise.connect(bp);
+          bp.connect(gain);
+          gain.connect(this.masterGain);
+
+          noise.start(now + offset);
+          noise.stop(now + offset + 0.06);
+        }
+
+        // Deep exhaust anti-lag bark
+        const bangNoise = this.ctx.createBufferSource();
+        bangNoise.buffer = this.noiseBuffer;
+        const bangFilter = this.ctx.createBiquadFilter();
+        bangFilter.type = "lowpass";
+        bangFilter.frequency.setValueAtTime(340, now + 0.04);
+
+        const bangGain = this.ctx.createGain();
+        bangGain.gain.setValueAtTime(0.65, now + 0.04);
+        bangGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+        bangNoise.connect(bangFilter);
+        bangFilter.connect(bangGain);
+        bangGain.connect(this.masterGain);
+        bangNoise.start(now + 0.04);
+        bangNoise.stop(now + 0.23);
+      }
+
+      updateEngine(rpm, isRunning, isThrottle) {
+        if (!this.initialised) return;
+        const now = this.ctx.currentTime;
+
+        if (!isRunning || rpm < 200) {
+          this.engineGain.gain.setTargetAtTime(0.0001, now, 0.08);
+          this.turboGain.gain.setTargetAtTime(0.0001, now, 0.06);
+          return;
+        }
+
+        const firingHz = Math.max(20, (rpm / 60) * 2);
+        this.oscCylinderBankA.frequency.setTargetAtTime(firingHz, now, 0.03);
+        this.oscCylinderBankB.frequency.setTargetAtTime(firingHz * 1.035, now, 0.03);
+        this.oscSubBurble.frequency.setTargetAtTime(firingHz * 0.5, now, 0.03);
+
+        // Pronounced Boxer burble at idle, smoothing into fierce flat-four howl on boost
+        const idleFactor = Math.max(0.15, 1 - (rpm - 980) / 2600);
+        this.lfoBoxerPulse.frequency.setTargetAtTime(8.1 + (rpm / 900), now, 0.05);
+        this.lfoBoxerGain.gain.setTargetAtTime(6.8 * idleFactor, now, 0.05);
+
+        const cutoff = isThrottle
+          ? 240 + (rpm / 7200) * 1650
+          : 165 + (rpm / 7200) * 800;
+        this.filter.frequency.setTargetAtTime(cutoff, now, 0.04);
+
+        const targetVol = isThrottle ? 0.44 : 0.27;
+        this.engineGain.gain.setTargetAtTime(targetVol, now, 0.04);
+
+        // Turbo spool whistle climbs above 2,400 RPM
+        const boostRatio = Math.max(0, (rpm - 2200) / 4800);
+        this.oscTurboWhistle.frequency.setTargetAtTime(1450 + boostRatio * 2900, now, 0.05);
+        this.turboGain.gain.setTargetAtTime(isThrottle ? boostRatio * 0.075 : boostRatio * 0.02, now, 0.06);
+      }
+    }
+
+    const audio = new BoxerAudioEngine();
+
+    /**
+     * =========================================================================
+     * UI CONTROLS & INTERACTION WIRING
+     * =========================================================================
+     */
+    const swIgnition = document.getElementById("swIgnition");
+    const btnStart = document.getElementById("btnStart");
+    const swSpots = document.getElementById("swSpots");
+    const swFestive = document.getElementById("swFestive");
+    const btnThrottle = document.getElementById("btnThrottle");
+    const audioToggleBtn = document.getElementById("audioToggleBtn");
+
+    const lblIgnition = document.getElementById("lblIgnition");
+    const lblEngine = document.getElementById("lblEngine");
+    const lblSpots = document.getElementById("lblSpots");
+    const lblFestive = document.getElementById("lblFestive");
+
+    const lampIgn = document.getElementById("lampIgn");
+    const lampOil = document.getElementById("lampOil");
+    const lampBeam = document.getElementById("lampBeam");
+    const rpmDisplay = document.getElementById("rpmDisplay");
+
+    function updateDashboardUI() {
+      swIgnition.setAttribute("aria-pressed", String(state.ignitionOn));
+      lblIgnition.textContent = state.ignitionOn ? "ON" : "OFF";
+
+      swSpots.setAttribute("aria-pressed", String(state.cibiesOn));
+      lblSpots.textContent = state.cibiesOn ? "ON" : "OFF";
+
+      swFestive.setAttribute("aria-pressed", String(state.festiveExtraOn));
+      lblFestive.textContent = state.festiveExtraOn ? "ON" : "OFF";
+
+      if (state.engineRunning) {
+        btnStart.textContent = "STOP";
+        btnStart.classList.add("running");
+        lblEngine.textContent = "RUNNING";
+      } else if (state.cranking) {
+        btnStart.textContent = "CRANK";
+        btnStart.classList.remove("running");
+        lblEngine.textContent = "CRANKING";
+      } else {
+        btnStart.textContent = "START";
+        btnStart.classList.remove("running");
+        lblEngine.textContent = "STOPPED";
+      }
+
+      // Tell-Tale LEDs
+      lampIgn.classList.toggle("ign-on", state.ignitionOn && !state.engineRunning);
+      lampOil.classList.toggle("oil-warn", state.ignitionOn && !state.engineRunning);
+      lampBeam.classList.toggle("beam-on", state.cibiesOn);
+
+      // Audio toggle status
+      const audioIcon = document.getElementById("audioIcon");
+      const audioStatusText = document.getElementById("audioStatusText");
+      if (state.muted) {
+        audioToggleBtn.classList.add("muted");
+        audioToggleBtn.classList.remove("active");
+        audioIcon.textContent = "🔇";
+        audioStatusText.textContent = "SOUND OFF";
+      } else {
+        audioToggleBtn.classList.remove("muted");
+        audioToggleBtn.classList.add("active");
+        audioIcon.textContent = "🔊";
+        audioStatusText.textContent = "SOUND ON";
+      }
+    }
+
+    // 1. Ignition Switch
+    swIgnition.addEventListener("click", () => {
+      state.ignitionOn = !state.ignitionOn;
+      audio.playSwitchClick(state.ignitionOn);
+
+      if (!state.ignitionOn && state.engineRunning) {
+        state.engineRunning = false;
+        state.targetRpm = 0;
+        audio.triggerWastegateFlutter();
+      }
+      updateDashboardUI();
+    });
+
+    // 2. Engine Push-Button Starter
+    btnStart.addEventListener("click", () => {
+      audio.init();
+
+      if (state.engineRunning) {
+        state.engineRunning = false;
+        state.targetRpm = 0;
+        audio.playSwitchClick(false);
+        updateDashboardUI();
+        return;
+      }
+
+      if (state.cranking) return;
+
+      if (!state.ignitionOn) {
+        state.ignitionOn = true;
+      }
+
+      state.cranking = true;
+      updateDashboardUI();
+      audio.playStarterBurst(0.45);
+
+      setTimeout(() => {
+        if (!state.ignitionOn) {
+          state.cranking = false;
+          updateDashboardUI();
+          return;
+        }
+        state.cranking = false;
+        state.engineRunning = true;
+        state.rpm = 1850;
+        state.targetRpm = 980; // Deep uneven Subaru Boxer idle
+        spawnExhaustPuff(3);
+        updateDashboardUI();
+      }, 420);
+    });
+
+    // 3. Festive Cibié Spots Toggle (Illuminates Top Screen in Christmas Styling)
+    swSpots.addEventListener("click", () => {
+      state.cibiesOn = !state.cibiesOn;
+      audio.playSwitchClick(state.cibiesOn);
+      updateDashboardUI();
+    });
+
+    // 4. Extra Festive Lights & Snow Toggle
+    swFestive.addEventListener("click", () => {
+      state.festiveExtraOn = !state.festiveExtraOn;
+      // Automatically illuminate Cibié stage if user flips Festive Lights first
+      if (state.festiveExtraOn && !state.cibiesOn) {
+        state.cibiesOn = true;
+      }
+      audio.playSwitchClick(state.festiveExtraOn);
+      updateDashboardUI();
+    });
+
+    // 5. EJ20 Boxer Turbo Throttle Blip (Drives Subaru Across Stage)
+    function engageThrottle() {
+      audio.init();
+      // Auto-power up ignition, Cibié festive stage, and engine if user hits throttle straight away
+      if (!state.ignitionOn) state.ignitionOn = true;
+      if (!state.cibiesOn) state.cibiesOn = true;
+      if (!state.engineRunning && !state.cranking) {
+        state.engineRunning = true;
+        state.rpm = 1650;
+      }
+      updateDashboardUI();
+
+      state.throttlePressed = true;
+      btnThrottle.classList.add("revving");
+    }
+
+    function releaseThrottle() {
+      if (state.throttlePressed && state.engineRunning && state.rpm > 3100) {
+        setTimeout(() => audio.triggerWastegateFlutter(), 70);
+        spawnExhaustPuff(4);
+      }
+      state.throttlePressed = false;
+      btnThrottle.classList.remove("revving");
+    }
+
+    btnThrottle.addEventListener("mousedown", engageThrottle);
+    window.addEventListener("mouseup", releaseThrottle);
+
+    btnThrottle.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      engageThrottle();
+    }, { passive: false });
+    window.addEventListener("touchend", releaseThrottle);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && !e.repeat) {
+        e.preventDefault();
+        engageThrottle();
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        releaseThrottle();
+      }
+    });
+
+    // Audio Mute Toggle
+    audioToggleBtn.addEventListener("click", () => {
+      audio.init();
+      state.muted = !state.muted;
+      audio.setMuted(state.muted);
+      updateDashboardUI();
+    });
+
+    updateDashboardUI();
+
+    /**
+     * =========================================================================
+     * HTML5 CANVAS — PITCH-BLACK STANDBY & FESTIVE SUBARU IMPREZA WRC STAGE
+     * =========================================================================
+     */
+    const canvas = document.getElementById("rallyCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let width = 800;
+    let height = 450;
+    let dpr = 1;
+
+    const snowflakes = [];
+    const exhaustPuffs = [];
+    const gravelSpray = [];
+    const stars = [];
+    const BULB_COLOURS = ["#ef4444", "#eab308", "#22c55e", "#38bdf8", "#f43f5e", "#fde047"];
+
+    function initParticles() {
+      snowflakes.length = 0;
+      for (let i = 0; i < 140; i++) {
+        snowflakes.push({
+          x: Math.random() * 1200,
+          y: Math.random() * 700,
+          r: 1 + Math.random() * 2.5,
+          vy: 20 + Math.random() * 38,
+          vx: -12 - Math.random() * 20,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+
+      stars.length = 0;
+      for (let i = 0; i < 42; i++) {
+        stars.push({
+          x: Math.random(),
+          y: Math.random() * 0.4,
+          r: 0.6 + Math.random() * 1.1,
+          twinkle: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    function spawnExhaustPuff(count = 1) {
+      for (let i = 0; i < count; i++) {
+        exhaustPuffs.push({
+          xOffset: -192 + (Math.random() - 0.5) * 6,
+          yOffset: 43 + (Math.random() - 0.5) * 4,
+          vx: -55 - Math.random() * 65 - (state.throttlePressed ? 90 : 0),
+          vy: -8 - Math.random() * 16,
+          r: 4.5 + Math.random() * 5,
+          alpha: 0.5 + Math.random() * 0.25,
+          life: 0,
+          maxLife: 0.65 + Math.random() * 0.45
+        });
+      }
+    }
+
+    function spawnSnowGravelSpray(count = 4) {
+      for (let i = 0; i < count; i++) {
+        gravelSpray.push({
+          xOffset: -130 + (Math.random() - 0.5) * 16,
+          yOffset: 54,
+          vx: -110 - Math.random() * 190,
+          vy: -28 - Math.random() * 105,
+          r: 1.6 + Math.random() * 3.0,
+          isSnow: Math.random() > 0.25,
+          life: 0,
+          maxLife: 0.45 + Math.random() * 0.35
+        });
+      }
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(300, rect.width);
+      height = Math.max(260, rect.height);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    initParticles();
+    resizeCanvas();
+
+    /**
+     * Render Pitch-Black Standby Screen When Cibiés Are Off
+     */
+    function drawBlackStandbyScreen() {
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, width, height);
+
+      // Subtle dark-grey telemetry standby prompt
+      ctx.save();
+      const promptText = CARD_CONFIG.standbyPrompt;
+      let fontSize = Math.max(10, Math.min(13, width * 0.032));
+      ctx.font = `700 ${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+      ctx.fillStyle = state.ignitionOn ? "#64748b" : "#334155";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(promptText, width / 2, height / 2);
+
+      if (state.ignitionOn) {
+        ctx.font = `600 ${Math.max(9, fontSize - 2)}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+        ctx.fillStyle = "#475569";
+        ctx.fillText("IGNITION LIVE • FLICK 🎄 CIBIÉ SPOTS TO ILLUMINATE STAGE", width / 2, height / 2 + 22);
+      }
+      ctx.restore();
+    }
+
+    /**
+     * Draw Festive Snowy Night Forest Stage + Strung Christmas Fairy Lights
+     */
+    function drawFestiveNightStage() {
+      // Crisp winter midnight sky gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, height * 0.75);
+      skyGrad.addColorStop(0, "#02040a");
+      skyGrad.addColorStop(0.55, "#081226");
+      skyGrad.addColorStop(1, "#112240");
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Twinkling winter stars
+      stars.forEach((s) => {
+        const alpha = 0.3 + 0.4 * Math.sin(state.time * 2.1 + s.twinkle);
+        ctx.fillStyle = `rgba(226, 232, 240, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(s.x * width, s.y * height, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      const horizonY = height * 0.68;
+
+      // Distant snowy mountain ridge
+      ctx.fillStyle = "#0a1324";
+      ctx.beginPath();
+      ctx.moveTo(0, horizonY);
+      ctx.lineTo(0, horizonY - height * 0.14);
+      ctx.lineTo(width * 0.22, horizonY - height * 0.22);
+      ctx.lineTo(width * 0.48, horizonY - height * 0.13);
+      ctx.lineTo(width * 0.74, horizonY - height * 0.25);
+      ctx.lineTo(width, horizonY - height * 0.16);
+      ctx.lineTo(width, horizonY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Forest pine trees silhouette
+      ctx.fillStyle = "#050a14";
+      const treeSpacing = 42;
+      const scrollShift = state.throttlePressed ? (state.time * 130) % treeSpacing : 0;
+      for (let x = -treeSpacing; x < width + treeSpacing; x += treeSpacing) {
+        const tx = x - scrollShift;
+        const treeH = 36 + ((Math.abs(Math.round(x)) * 19) % 28);
+        ctx.beginPath();
+        ctx.moveTo(tx, horizonY);
+        ctx.lineTo(tx + 13, horizonY - treeH);
+        ctx.lineTo(tx + 26, horizonY);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Festive Christmas Fairy Lights strung across the forest treeline
+      const stringCount = state.festiveExtraOn ? 2 : 1;
+      for (let s = 0; s < stringCount; s++) {
+        const baseY = horizonY - 22 - s * 16;
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let lx = 0; lx <= width; lx += 16) {
+          const sag = Math.sin((lx / width) * Math.PI * 3 + s) * 7;
+          if (lx === 0) ctx.moveTo(lx, baseY + sag);
+          else ctx.lineTo(lx, baseY + sag);
+        }
+        ctx.stroke();
+
+        const bulbStep = state.festiveExtraOn ? 24 : 34;
+        for (let lx = 14; lx < width - 10; lx += bulbStep) {
+          const sag = Math.sin((lx / width) * Math.PI * 3 + s) * 7;
+          const by = baseY + sag;
+          const col = BULB_COLOURS[(Math.round(lx) + s) % BULB_COLOURS.length];
+          const pulse = 0.55 + 0.45 * Math.sin(state.time * 5.2 + lx * 0.08 + s);
+
+          const halo = ctx.createRadialGradient(lx, by, 1, lx, by, 13);
+          halo.addColorStop(0, col);
+          halo.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = halo;
+          ctx.globalAlpha = pulse;
+          ctx.beginPath();
+          ctx.arc(lx, by, 13, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+
+          ctx.fillStyle = col;
+          ctx.beginPath();
+          ctx.arc(lx, by, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Snowy Rally Stage Road Surface
+      const roadGrad = ctx.createLinearGradient(0, horizonY, 0, height);
+      roadGrad.addColorStop(0, "#1e293b");
+      roadGrad.addColorStop(0.35, "#263349");
+      roadGrad.addColorStop(1, "#0b0f17");
+      ctx.fillStyle = roadGrad;
+      ctx.fillRect(0, horizonY, width, height - horizonY);
+
+      // Crisp white snow bank along stage edge
+      ctx.fillStyle = "#cbd5e1";
+      ctx.fillRect(0, horizonY - 2, width, 5);
+
+      // Moving snow/ice ruts when driving across
+      ctx.strokeStyle = "rgba(241, 245, 249, 0.22)";
+      ctx.lineWidth = 1.6;
+      const roadSpeed = state.throttlePressed ? 480 : (state.engineRunning ? 16 : 0);
+      const streakOffset = (state.time * roadSpeed) % 120;
+      for (let row = 0; row < 4; row++) {
+        const ry = horizonY + 16 + row * ((height - horizonY) / 4.2);
+        for (let sx = -120; sx < width + 120; sx += 120) {
+          ctx.beginPath();
+          ctx.moveTo(sx - streakOffset, ry);
+          ctx.lineTo(sx - streakOffset + 52, ry);
+          ctx.stroke();
+        }
+      }
+    }
+
+    /**
+     * Draw Volumetric Cibié Rally Pod Light Cones
+     */
+    function drawCibieLightCones(carX, carY, scale) {
+      ctx.save();
+      ctx.translate(carX, carY);
+      ctx.scale(scale, scale);
+      ctx.globalCompositeOperation = "screen";
+
+      const beamLength = Math.max(480, width * 0.8);
+      const coneGrad = ctx.createLinearGradient(178, 12, 178 + beamLength, 32);
+      coneGrad.addColorStop(0, "rgba(255, 251, 230, 0.82)");
+      coneGrad.addColorStop(0.28, "rgba(254, 240, 138, 0.38)");
+      coneGrad.addColorStop(0.72, "rgba(224, 242, 254, 0.14)");
+      coneGrad.addColorStop(1, "rgba(224, 242, 254, 0)");
+
+      ctx.fillStyle = coneGrad;
+      ctx.beginPath();
+      ctx.moveTo(175, 2);
+      ctx.lineTo(178 + beamLength, -95);
+      ctx.lineTo(178 + beamLength, 125);
+      ctx.lineTo(175, 26);
+      ctx.closePath();
+      ctx.fill();
+
+      // Snow road foreground illumination pool
+      const roadWash = ctx.createRadialGradient(295, 52, 10, 315, 52, 230);
+      roadWash.addColorStop(0, "rgba(254, 249, 195, 0.36)");
+      roadWash.addColorStop(1, "rgba(254, 249, 195, 0)");
+      ctx.fillStyle = roadWash;
+      ctx.beginPath();
+      ctx.ellipse(315, 54, 230, 32, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /**
+     * Draw Detailed Side-Profile Subaru Impreza WRC (GC8 / 22B Style)
+     * Iconic WRC Blue (#003399), Gold Wheels, Large Rear Wing, Roof Scoop,
+     * Front Cibié Pod, 'GARY' Sunstrip & Roof-Mounted Christmas Tree
+     */
+    function drawSubaruImprezaWRC(carX, carY, scale) {
+      ctx.save();
+      ctx.translate(carX, carY + state.carBounceY);
+      ctx.rotate(state.carPitch);
+      ctx.scale(scale, scale);
+
+      // Ground contact shadow
+      ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+      ctx.beginPath();
+      ctx.ellipse(0, 58, 192, 13, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rally mudflaps (blue/black)
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(-176, 35, 13, 23);
+      ctx.fillRect(62, 37, 10, 20);
+
+      // -----------------------------------------------------------------------
+      // 1. ROOF-MOUNTED CHRISTMAS TREE & TWINKLING LIGHTS
+      // -----------------------------------------------------------------------
+      ctx.save();
+      ctx.translate(-14, -54);
+
+      // Roof rack rails
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(-40, 2);
+      ctx.lineTo(-40, -5);
+      ctx.lineTo(34, -5);
+      ctx.lineTo(34, 2);
+      ctx.stroke();
+
+      // Pine tree boughs
+      const boughGreens = ["#14532d", "#166534", "#15803d", "#22c55e"];
+      for (let layer = 0; layer < 5; layer++) {
+        const bx = -56 + layer * 23;
+        const spread = 23 - layer * 3.1;
+        ctx.fillStyle = boughGreens[layer % boughGreens.length];
+        ctx.beginPath();
+        ctx.moveTo(bx + 26, -8);
+        ctx.quadraticCurveTo(bx + 5, -8 - spread, bx - 14, -8 - spread * 0.55);
+        ctx.lineTo(bx - 6, -8);
+        ctx.lineTo(bx - 14, -8 + spread * 0.45);
+        ctx.quadraticCurveTo(bx + 5, -8 + spread * 0.75, bx + 26, -8);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Gold ratchet straps
+      ctx.strokeStyle = CARD_CONFIG.wrcGold;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-24, 2);
+      ctx.quadraticCurveTo(-20, -21, -14, 2);
+      ctx.moveTo(16, 2);
+      ctx.quadraticCurveTo(20, -19, 24, 2);
+      ctx.stroke();
+
+      // Twinkling Christmas bulbs on roof tree
+      const treeLights = [
+        { x: -50, y: -12 }, { x: -38, y: -21 }, { x: -32, y: -8 },
+        { x: -18, y: -24 }, { x: -10, y: -13 }, { x: 0, y: -22 },
+        { x: 12, y: -11 }, { x: 22, y: -19 }, { x: 34, y: -11 },
+        { x: 44, y: -9 }, { x: -26, y: -15 }, { x: 6, y: -16 }
+      ];
+
+      treeLights.forEach((pt, idx) => {
+        const col = BULB_COLOURS[idx % BULB_COLOURS.length];
+        const twinkle = 0.55 + 0.45 * Math.sin(state.time * 6.5 + idx * 1.3);
+
+        const glow = ctx.createRadialGradient(pt.x, pt.y, 1, pt.x, pt.y, 14);
+        glow.addColorStop(0, col);
+        glow.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = glow;
+        ctx.globalAlpha = twinkle;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = col;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 3.1, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
+
+      // -----------------------------------------------------------------------
+      // 2. ICONIC SUBARU IMPREZA WRC REAR WING
+      // -----------------------------------------------------------------------
+      ctx.fillStyle = CARD_CONFIG.wrcBlue;
+      // Wing endplate & uprights
+      ctx.beginPath();
+      ctx.moveTo(-172, 2);
+      ctx.lineTo(-184, -34);
+      ctx.lineTo(-152, -34);
+      ctx.lineTo(-144, 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.28)";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // WRC Gold tip flash on rear wing endplate
+      ctx.fillStyle = CARD_CONFIG.wrcGold;
+      ctx.beginPath();
+      ctx.moveTo(-182, -26);
+      ctx.lineTo(-184, -34);
+      ctx.lineTo(-152, -34);
+      ctx.lineTo(-150, -26);
+      ctx.closePath();
+      ctx.fill();
+
+      // -----------------------------------------------------------------------
+      // 3. IMPREZA WRC WIDE-ARCH BODYWORK SILHOUETTE
+      // -----------------------------------------------------------------------
+      ctx.fillStyle = CARD_CONFIG.wrcBlue;
+      ctx.beginPath();
+      // Rear bumper
+      ctx.moveTo(-178, 33);
+      ctx.lineTo(-180, 6);
+      // Boot deck & C-pillar fastback slope
+      ctx.lineTo(-136, 0);
+      ctx.lineTo(-78, -50);
+      // Roofline
+      ctx.lineTo(16, -50);
+      // Windscreen A-pillar rake
+      ctx.lineTo(74, -4);
+      // Bonnet with aggressive bulge
+      ctx.lineTo(174, 4);
+      // Front WRC bumper & splitter lip
+      ctx.lineTo(182, 26);
+      ctx.lineTo(184, 41);
+      ctx.lineTo(168, 43);
+      // Side skirt sill
+      ctx.lineTo(-170, 43);
+      ctx.closePath();
+      ctx.fill();
+
+      // Crisp specular highlight line
+      ctx.strokeStyle = "rgba(147, 197, 253, 0.35)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // WRC Roof Vent Scoop
+      ctx.fillStyle = CARD_CONFIG.wrcBlue;
+      ctx.beginPath();
+      ctx.moveTo(2, -50);
+      ctx.lineTo(10, -56);
+      ctx.lineTo(22, -56);
+      ctx.lineTo(24, -50);
+      ctx.closePath();
+      ctx.fill();
+
+      // Iconic Subaru Bonnet Turbo Scoop
+      ctx.fillStyle = "#002673";
+      ctx.beginPath();
+      ctx.moveTo(96, -1);
+      ctx.lineTo(114, -7);
+      ctx.lineTo(132, -6);
+      ctx.lineTo(134, 1);
+      ctx.closePath();
+      ctx.fill();
+
+      // Classic Subaru WRC Gold Side Swoosh & Comet Livery
+      ctx.fillStyle = CARD_CONFIG.wrcGold;
+      ctx.beginPath();
+      ctx.moveTo(-162, 16);
+      ctx.quadraticCurveTo(-55, 8, 68, 18);
+      ctx.lineTo(66, 25);
+      ctx.quadraticCurveTo(-55, 16, -162, 23);
+      ctx.closePath();
+      ctx.fill();
+
+      // Gold WRC Stars / Accent Stripes on Rear Quarter
+      ctx.beginPath();
+      ctx.moveTo(-152, 6);
+      ctx.lineTo(-112, 3);
+      ctx.lineTo(-118, 9);
+      ctx.lineTo(-155, 11);
+      ctx.closePath();
+      ctx.fill();
+
+      // -----------------------------------------------------------------------
+      // 4. WINDOWS, ROLL CAGE & SANTA-HAT DRIVER HELMET
+      // -----------------------------------------------------------------------
+      // Rear quarter window
+      ctx.fillStyle = "#09101f";
+      ctx.beginPath();
+      ctx.moveTo(-120, -4);
+      ctx.lineTo(-74, -43);
+      ctx.lineTo(-44, -43);
+      ctx.lineTo(-44, -4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = "#1e293b";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Front door window
+      ctx.fillStyle = "#0c1528";
+      ctx.beginPath();
+      ctx.moveTo(-36, -4);
+      ctx.lineTo(-36, -43);
+      ctx.lineTo(12, -43);
+      ctx.lineTo(62, -4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Internal FIA Roll Cage
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 2.8;
+      ctx.beginPath();
+      ctx.moveTo(-104, -6);
+      ctx.lineTo(-44, -41);
+      ctx.lineTo(-40, -4);
+      ctx.moveTo(-42, -41);
+      ctx.lineTo(10, -41);
+      ctx.lineTo(54, -5);
+      ctx.stroke();
+
+      // Driver Helmet + Festive Santa Hat
+      ctx.fillStyle = "#f8fafc";
+      ctx.beginPath();
+      ctx.arc(-6, -24, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(-2, -27, 11, 6);
+
+      // Red Santa Hat on Driver's Helmet
+      ctx.fillStyle = "#dc2626";
+      ctx.beginPath();
+      ctx.moveTo(-16, -29);
+      ctx.lineTo(-6, -41);
+      ctx.lineTo(4, -29);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(-16, -30, 3.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // -----------------------------------------------------------------------
+      // 5. WINDSCREEN & 'GARY' SUNSTRIP + DOOR NUMBER PLATE
+      // -----------------------------------------------------------------------
+      ctx.fillStyle = "#15233d";
+      ctx.beginPath();
+      ctx.moveTo(16, -49);
+      ctx.lineTo(72, -4);
+      ctx.lineTo(86, -4);
+      ctx.lineTo(28, -49);
+      ctx.closePath();
+      ctx.fill();
+
+      // Sunstrip
+      ctx.fillStyle = CARD_CONFIG.wrcGold;
+      ctx.beginPath();
+      ctx.moveTo(17, -48);
+      ctx.lineTo(30, -37);
+      ctx.lineTo(41, -37);
+      ctx.lineTo(28, -48);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(45, -43);
+      ctx.rotate(0.68);
+      ctx.fillStyle = "#001f66";
+      ctx.font = "900 9px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(CARD_CONFIG.senderName, 0, 0);
+      ctx.restore();
+
+      // Rally Door Number Square ('555')
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect(-34, 8, 48, 28);
+      ctx.strokeStyle = "#002673";
+      ctx.lineWidth = 1.6;
+      ctx.strokeRect(-34, 8, 48, 28);
+
+      ctx.fillStyle = "#002673";
+      ctx.font = "900 16px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(CARD_CONFIG.doorNumber, -10, 28);
+
+      // -----------------------------------------------------------------------
+      // 6. FRONT CIBIÉ RALLY LIGHT POD, HEADLAMPS & TAIL LIGHTS
+      // -----------------------------------------------------------------------
+      // Rear tail light glow
+      ctx.fillStyle = state.ignitionOn ? "#ff2a2a" : "#7f1d1d";
+      ctx.fillRect(-181, 8, 5, 14);
+      if (state.ignitionOn) {
+        const tailGlow = ctx.createRadialGradient(-182, 15, 2, -182, 15, 28);
+        tailGlow.addColorStop(0, "rgba(255, 45, 45, 0.85)");
+        tailGlow.addColorStop(1, "rgba(255, 45, 45, 0)");
+        ctx.fillStyle = tailGlow;
+        ctx.beginPath();
+        ctx.arc(-182, 15, 28, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Bonnet-mounted Cibié WRC Light Pod + Bumper Fog Lamp
+      const spotPositions = [
+        { x: 152, y: 1, r: 7.2 },   // Bonnet Cibié pod
+        { x: 175, y: 11, r: 7.8 },  // Main headlamp
+        { x: 179, y: 24, r: 8.8 }   // Large WRC bumper Cibié fog
+      ];
+
+      spotPositions.forEach((sp) => {
+        ctx.fillStyle = "#f8fafc";
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, sp.r + 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#fffbeb";
+        ctx.beginPath();
+        ctx.arc(sp.x + 1, sp.y, sp.r - 0.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        const flare = ctx.createRadialGradient(sp.x + 2, sp.y, 1, sp.x + 2, sp.y, 26);
+        flare.addColorStop(0, "rgba(255, 255, 255, 1)");
+        flare.addColorStop(0.35, "rgba(254, 240, 138, 0.78)");
+        flare.addColorStop(1, "rgba(254, 240, 138, 0)");
+        ctx.fillStyle = flare;
+        ctx.beginPath();
+        ctx.arc(sp.x + 2, sp.y, 26, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Large WRC Titanium Exhaust Tailpipe
+      ctx.fillStyle = "#cbd5e1";
+      ctx.fillRect(-188, 39, 15, 6);
+
+      // -----------------------------------------------------------------------
+      // 7. WIDE WRC ARCHES & GOLD MULTI-SPOKE OZ / SPEEDLINE WHEELS
+      // -----------------------------------------------------------------------
+      const wheelPositions = [-112, 115];
+      wheelPositions.forEach((wx) => {
+        const wy = 40;
+
+        // Wide-arch cutout
+        ctx.fillStyle = "#05070b";
+        ctx.beginPath();
+        ctx.arc(wx, wy, 30, Math.PI, 0);
+        ctx.fill();
+
+        // Pirelli P-Zero snow/gravel tyre
+        ctx.fillStyle = "#111318";
+        ctx.beginPath();
+        ctx.arc(wx, wy, 25.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#262a34";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Iconic WRC Gold Multi-Spoke Alloy Wheel
+        ctx.save();
+        ctx.translate(wx, wy);
+        ctx.rotate(state.wheelAngle);
+
+        ctx.fillStyle = CARD_CONFIG.wrcGold;
+        ctx.beginPath();
+        ctx.arc(0, 0, 16.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#1e293b";
+        ctx.beginPath();
+        ctx.arc(0, 0, 13.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 10 Gold Rally Spokes
+        ctx.strokeStyle = "#facc15";
+        ctx.lineWidth = 2.3;
+        for (let s = 0; s < 10; s++) {
+          const a = (s * Math.PI) / 5;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(a) * 14.2, Math.sin(a) * 14.2);
+          ctx.stroke();
+        }
+
+        // Blue/Gold Subaru centre cap
+        ctx.fillStyle = CARD_CONFIG.wrcBlue;
+        ctx.beginPath();
+        ctx.arc(0, 0, 4.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      });
+
+      ctx.restore();
+    }
+
+    /**
+     * Draw Exhaust Vapour, Snow/Gravel Spray & Falling Winter Snow
+     */
+    function drawParticles(dt, carX, carY, scale) {
+      // 1. Exhaust vapour puffs
+      for (let i = exhaustPuffs.length - 1; i >= 0; i--) {
+        const p = exhaustPuffs[i];
+        p.life += dt;
+        if (p.life >= p.maxLife) {
+          exhaustPuffs.splice(i, 1);
+          continue;
+        }
+        p.xOffset += p.vx * dt;
+        p.yOffset += p.vy * dt;
+        p.r += 14 * dt;
+
+        const progress = p.life / p.maxLife;
+        const alpha = p.alpha * (1 - progress);
+        ctx.fillStyle = `rgba(226, 232, 240, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(carX + p.xOffset * scale, carY + p.yOffset * scale, p.r * scale, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 2. Rear tyre snow & gravel spray
+      for (let i = gravelSpray.length - 1; i >= 0; i--) {
+        const g = gravelSpray[i];
+        g.life += dt;
+        if (g.life >= g.maxLife) {
+          gravelSpray.splice(i, 1);
+          continue;
+        }
+        g.vy += 260 * dt;
+        g.xOffset += g.vx * dt;
+        g.yOffset += g.vy * dt;
+
+        const alpha = 1 - g.life / g.maxLife;
+        ctx.fillStyle = g.isSnow
+          ? `rgba(248, 250, 252, ${alpha * 0.92})`
+          : `rgba(148, 163, 184, ${alpha * 0.85})`;
+        ctx.beginPath();
+        ctx.arc(carX + g.xOffset * scale, carY + g.yOffset * scale, g.r * scale, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 3. Falling Winter Snowflakes
+      const activeSnowCount = state.festiveExtraOn ? snowflakes.length : Math.floor(snowflakes.length * 0.65);
+      for (let i = 0; i < activeSnowCount; i++) {
+        const f = snowflakes[i];
+        const windBoost = state.throttlePressed ? -130 : 0;
+        f.y += f.vy * dt;
+        f.x += (f.vx + windBoost + Math.sin(state.time * 1.5 + f.phase) * 12) * dt;
+
+        if (f.y > height) {
+          f.y = -6;
+          f.x = Math.random() * width;
+        }
+        if (f.x < -10) f.x = width + 10;
+        if (f.x > width + 10) f.x = -10;
+
+        const inBeam = f.x > carX + 80 * scale && f.y > height * 0.35 && f.y < height * 0.84;
+        ctx.fillStyle = inBeam ? "rgba(255, 253, 230, 0.94)" : "rgba(226, 232, 240, 0.56)";
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    /**
+     * Draw Responsive Festive Greeting & 'FROM GARY' Overlay
+     * Dynamically scales fonts so zero characters ever clip on 360px phones!
+     */
+    function drawFestiveGreetingOverlay() {
+      ctx.save();
+
+      // Top-left 'GARY' WRC sunstrip crest badge
+      ctx.fillStyle = "rgba(0, 31, 102, 0.82)";
+      ctx.strokeStyle = "rgba(234, 179, 8, 0.55)";
+      ctx.lineWidth = 1.2;
+      const badgeW = 98;
+      const badgeH = 26;
+      ctx.beginPath();
+      ctx.roundRect(14, 14, badgeW, badgeH, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#fde047";
+      ctx.font = "900 13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(CARD_CONFIG.senderName, 14 + badgeW / 2, 31);
+
+      // Co-Driver Pace Note Pill Banner (auto-scaled to fit narrow portrait viewports)
+      const noteText = CARD_CONFIG.paceNoteText;
+      const maxPillW = width - 20;
+      const innerPad = 20;
+      let noteFontSize = 11.5;
+      ctx.font = `800 ${noteFontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+
+      while (ctx.measureText(noteText).width > maxPillW - innerPad && noteFontSize > 6.5) {
+        noteFontSize -= 0.5;
+        ctx.font = `800 ${noteFontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+      }
+
+      const measuredNoteW = ctx.measureText(noteText).width;
+      const pillW = Math.min(maxPillW, measuredNoteW + innerPad);
+      const pillX = (width - pillW) / 2;
+      const pillY = 48;
+      const pillH = Math.max(22, noteFontSize + 13);
+
+      ctx.fillStyle = "rgba(254, 243, 199, 0.95)";
+      ctx.beginPath();
+      ctx.roundRect(pillX, pillY, pillW, pillH, 6);
+      ctx.fill();
+
+      ctx.fillStyle = "#78350f";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(noteText, width / 2, pillY + pillH / 2 + 0.5);
+      ctx.textBaseline = "alphabetic";
+
+      // Main Glowing 'MERRY CHRISTMAS 2026' Headline
+      const fullHeadline = `${CARD_CONFIG.greetingTitle} ${CARD_CONFIG.year}`;
+      const maxHeadlineW = width - 24;
+      let titleSize = Math.max(18, Math.min(42, width * 0.066));
+      ctx.font = `900 ${titleSize}px sans-serif`;
+
+      while (ctx.measureText(fullHeadline).width > maxHeadlineW && titleSize > 14) {
+        titleSize -= 1;
+        ctx.font = `900 ${titleSize}px sans-serif`;
+      }
+
+      ctx.textAlign = "center";
+      ctx.shadowColor = "rgba(234, 179, 8, 0.85)";
+      ctx.shadowBlur = 18;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(fullHeadline, width / 2, pillY + pillH + 10 + titleSize);
+
+      // Subheading: 'FROM GARY'
+      ctx.shadowColor = "rgba(239, 68, 68, 0.9)";
+      ctx.shadowBlur = 12;
+      ctx.fillStyle = "#fde047";
+      const sigSize = Math.max(12, titleSize * 0.44);
+      ctx.font = `900 ${sigSize}px sans-serif`;
+      ctx.fillText(`FROM ${CARD_CONFIG.senderName}`, width / 2, pillY + pillH + 16 + titleSize + sigSize);
+
+      // Celebratory Pass Banner when Subaru finishes driving across the stage
+      if (state.passBannerTimer > 0) {
+        const finaleText = CARD_CONFIG.finaleBannerText;
+        let finFont = 11;
+        ctx.font = `800 ${finFont}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+        while (ctx.measureText(finaleText).width > width - 28 && finFont > 6.5) {
+          finFont -= 0.5;
+          ctx.font = `800 ${finFont}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+        }
+        const fW = Math.min(width - 20, ctx.measureText(finaleText).width + 20);
+        const fH = finFont + 12;
+        const fY = height - fH - 12;
+
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "rgba(0, 51, 153, 0.92)";
+        ctx.strokeStyle = "#eab308";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect((width - fW) / 2, fY, fW, fH, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.textBaseline = "middle";
+        ctx.fillText(finaleText, width / 2, fY + fH / 2 + 0.5);
+        ctx.textBaseline = "alphabetic";
+      }
+
+      ctx.restore();
+    }
+
+    /**
+     * =========================================================================
+     * MAIN ANIMATION & PHYSICS LOOP
+     * =========================================================================
+     */
+    let puffTimer = 0;
+    let sprayTimer = 0;
+
+    function tick(now) {
+      const dt = Math.min(0.05, (now - state.lastFrameTime) / 1000);
+      state.lastFrameTime = now;
+      state.time += dt;
+
+      // 1. Update EJ20 Boxer RPM Physics
+      if (state.engineRunning) {
+        if (state.throttlePressed) {
+          state.targetRpm = 7050;
+          state.rpm += (state.targetRpm - state.rpm) * Math.min(1, dt * 7.8);
+        } else {
+          // Uneven flat-four Boxer burble cadence around ~980 RPM
+          const boxerBurble = Math.sin(state.time * 15.5) * 48 + Math.cos(state.time * 8.1) * 32;
+          state.targetRpm = 980 + boxerBurble;
+          state.rpm += (state.targetRpm - state.rpm) * Math.min(1, dt * 4.5);
+        }
+      } else if (state.cranking) {
+        state.rpm = 310 + Math.sin(state.time * 32) * 38;
+      } else {
+        state.rpm += (0 - state.rpm) * Math.min(1, dt * 5.5);
+        if (state.rpm < 15) state.rpm = 0;
+      }
+
+      rpmDisplay.textContent = `${Math.round(state.rpm)} RPM`;
+      audio.updateEngine(state.rpm, state.engineRunning, state.throttlePressed);
+
+      // 2. Drive-Across Stage Horizontal Motion & Suspension Squat
+      const scale = Math.max(0.56, Math.min(1.18, width / 640));
+      const baseCarX = width * 0.36;
+
+      if (state.engineRunning && state.throttlePressed) {
+        // Accelerate left-to-right across the snowy stage!
+        const driveSpeed = Math.max(210, width * 0.62);
+        state.carXOffset += driveSpeed * dt;
+
+        // Loop smoothly from left side once Subaru clears right edge
+        if (baseCarX + state.carXOffset > width + 210 * scale) {
+          state.carXOffset = -baseCarX - 200 * scale;
+          state.passBannerTimer = 4.5; // Show 'FLAT OUT OVER CREST • MERRY CHRISTMAS FROM GARY'
+        }
+      } else if (state.carXOffset !== 0) {
+        // When throttle is released, smoothly cruise back to stage start mark if off-screen, or settle
+        if (baseCarX + state.carXOffset < baseCarX - 10) {
+          state.carXOffset += Math.max(140, width * 0.35) * dt;
+          if (state.carXOffset > 0) state.carXOffset = 0;
+        } else {
+          state.carXOffset += (0 - state.carXOffset) * Math.min(1, dt * 3.2);
+          if (Math.abs(state.carXOffset) < 1) state.carXOffset = 0;
+        }
+      }
+
+      if (state.passBannerTimer > 0) {
+        state.passBannerTimer = Math.max(0, state.passBannerTimer - dt);
+      }
+
+      if (state.engineRunning) {
+        const vibAmp = state.throttlePressed ? 1.5 : 0.9;
+        state.carBounceY = Math.sin(state.time * (state.throttlePressed ? 60 : 25)) * vibAmp;
+        const targetPitch = state.throttlePressed ? -0.026 : 0;
+        state.carPitch += (targetPitch - state.carPitch) * Math.min(1, dt * 8);
+
+        if (state.throttlePressed || Math.abs(state.carXOffset) > 4) {
+          state.wheelAngle += dt * 24;
+        }
+      } else {
+        state.carBounceY = 0;
+        state.carPitch += (0 - state.carPitch) * Math.min(1, dt * 6);
+      }
+
+      // 3. Particle Emission
+      if (state.engineRunning && state.cibiesOn) {
+        puffTimer += dt;
+        const puffInterval = state.throttlePressed ? 0.055 : 0.24;
+        if (puffTimer >= puffInterval) {
+          puffTimer = 0;
+          spawnExhaustPuff(1);
+        }
+
+        if (state.throttlePressed) {
+          sprayTimer += dt;
+          if (sprayTimer >= 0.028) {
+            sprayTimer = 0;
+            spawnSnowGravelSpray(3);
+          }
+        }
+      }
+
+      // 4. Render Top Screen: Pitch-Black Standby vs Festive Illuminated Stage
+      ctx.clearRect(0, 0, width, height);
+
+      if (!state.cibiesOn) {
+        drawBlackStandbyScreen();
+      } else {
+        const carX = baseCarX + state.carXOffset;
+        const carY = height * 0.72;
+
+        drawFestiveNightStage();
+        drawCibieLightCones(carX, carY, scale);
+        drawSubaruImprezaWRC(carX, carY, scale);
+        drawParticles(dt, carX, carY, scale);
+        drawFestiveGreetingOverlay();
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    window.addEventListener("load", () => {
+      resizeCanvas();
+      state.lastFrameTime = performance.now();
+      requestAnimationFrame(tick);
+    });
+  </script>
+</body>
+</html>
